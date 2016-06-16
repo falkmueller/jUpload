@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Upload</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous" />
+    
+    <style type="text/css">
+        .filezone{
+            display: none;
+            background-color: white;
+            outline: 2px dashed black;
+            outline-offset: -10px;
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        .filezone:hover, .filezone.is-dragover {
+            background-color: #ccc;
+        }
+    </style>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    
+      <div class="container">
+          <h1>Upload</h1>
+          <form id="form" action="server_normal.php" method="POST" enctype="multipart/form-data">
+              <input name="file" id="uploadField" type="file" multiple />
+              <div class="filezone" id="filezone">
+                  <div><svg viewBox="0 0 50 43" height="43" width="50" xmlns="http://www.w3.org/2000/svg" class="box__icon"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"/></svg></div>
+                  Hier klicken<span id="drop_info"> oder Dateien per Drag&Drop drauf ziehen</span>
+              </div>
+              <button class="btn btn-default btn-lg btn-block" type="submit">senden</button>
+               
+              <div class="progress">
+                  <div class="progress-bar" id="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+              </div>
+              
+              <ul class="list-group" id="file_list"></ul>
+              
+          </form>
+      </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    
+    <script src="upload.js"></script>
+    
+    <script type="text/javascript">
+        u = new jUpload({
+            upload_fild: "#uploadField",
+            filezone: "#filezone",
+            upload_on_submit: '#form',
+            target: "server.php",
+            check_file: function(file){
+                var accept = ["jpg", "png", "gif", "jpeg"];
+                var fileTypeFound = false;
+                
+                for (var i = 0; i < accept.length; i++) {
+                    var extension = '.' + accept[i];
+                    var name = file.fileName.toLowerCase();
+                    if(name.indexOf(extension, name.length - extension.length) !== -1){
+                      fileTypeFound = true;
+                      break;
+                    }
+                }
+                
+                if(!fileTypeFound){
+                   var message = $("<div class=\"alert alert-danger\" role=\"alert\"></div>");
+                   message.html("Es sind nur Bilder erlaubt");
+                   $("#file_list").prepend(message);
+                   setTimeout(function(){message.remove();},2000);
+                }
+                
+                return fileTypeFound;
+            }
+        });
+
+        u.on("addedFile", function(file){
+            var list_item = $("<li class=\"list-group-item\" />");
+            list_item.append("<span>" + file.fileName + "</span>");
+            
+            var delete_button = $("<a class='btn'>Entfernen</a>");
+            delete_button.click(function(){
+                u.removeFile(file.uniqueName);
+                list_item.remove();
+            });
+            list_item.append(delete_button);
+            
+            $("#file_list").append(list_item);
+        });
+        
+        u.on("prozess", function(byte_ges, byte_send){
+            $("#progress-bar").css("width", parseInt(byte_send / byte_ges * 100) + '%');
+        });
+        
+        u.on("drop_unaviable", function(){
+            $("#drop_info").hide();
+        });
+        
+        u.on("upload_end", function(){
+            u.files = [];
+            $("#file_list").html("");
+        });
+        
+        u.init();
+        
+    </script>
+  </body>
+</html>
