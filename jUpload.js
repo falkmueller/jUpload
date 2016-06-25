@@ -271,9 +271,9 @@
                 setTimeout(function(){me.upload_chunk(0)},0);
             }      
             
-            me.onSuccess = function(){
+            me.onSuccess = function(res){
                 me.complete_send = true;
-                jupload.fire("file_uploaded", me);
+                jupload.fire("file_uploaded", me, res);
                 jupload.upload();
             }
             
@@ -342,7 +342,7 @@
                                setTimeout(function(){me.upload_chunk(current_chunk + 1)},0);
                            } else {
                                 me.onProgress(1);
-                                me.onSuccess();
+                                me.onSuccess(res);
                            }
                         } else if (xhr.readyState > 4 && xhr.status != 200) {
                             console.log(xhr.readyState);
