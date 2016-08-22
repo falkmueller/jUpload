@@ -71,6 +71,7 @@ a simple Javascript file upload.
 - **drop_unaviable**: called by init, if drag&drop not available (but dropzone can by clicked to select file)
 - **addFile_before**: (Param: file) called by select file, before add 
 - **addedFile**: (Param: uploadFile) called after file added to files array
+- **addedFiles**: called after (multiple) files are added
 - **removedFiles**: (Param: [uploadFile]) remove file by unique Name
 - **upload_before**: called by starting the upload
 - **upload_end**:  called after finished upload

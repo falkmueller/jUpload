@@ -148,6 +148,8 @@
                   me.addFile(item);
               }
             }
+            
+            me.fire("addedFiles");
         }
         
         var processDirectory = function (directory, path) {
