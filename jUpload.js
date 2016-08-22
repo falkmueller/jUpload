@@ -68,7 +68,7 @@
         me.init = function(){
             if(!support_upload()){
                 me.fire("unaviable");
-                return;
+                return false;
             }
             
             var filezone = $(me.opts.filezone);
