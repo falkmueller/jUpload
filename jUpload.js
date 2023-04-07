@@ -304,9 +304,14 @@
                 data.append("size",me.size);
                 
                 for (var key in jupload.opts.params) {
-                    data.append(key,jupload.opts.params[key]);
+                    var value = jupload.opts.params[key];
+                    if(typeof value === "function"){
+                      data.append(key,value());
+                    }
+                    else {
+                      data.append(key,value);
+                    }
                 }
-               
                 
                 //sending
                 xhr = new XMLHttpRequest();

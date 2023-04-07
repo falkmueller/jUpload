@@ -87,6 +87,11 @@
                 }
                 
                 return fileTypeFound;
+            },
+            /*optional parameters*/
+            params: {
+                "test_param_static" : "test_value_1",
+                "test_param_dynamic" : function(){ const d = new Date(); return d.getFullYear(); }  
             }
         });
 
